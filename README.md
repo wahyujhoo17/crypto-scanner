@@ -1,21 +1,22 @@
-# 🚀 Crypto Market Scanner Skill for Claude Code & OpenCode
+# 🚀 Universal Crypto Market Scanner AI Skill
 
-> **Instant technical analysis and real-time Binance market scanning directly inside your AI coding assistant.**
+> **Real-time Binance crypto scanner & technical analysis engine for ANY AI Assistant, Coding Agent, or LLM CLI.**
 
-`crypto-scanner` is an autonomous AI agent skill designed for **Claude Code**, **OpenCode**, and compatible LLM CLI tools. It scans 100+ Binance USDT pairs in real-time to detect high-probability technical setups, Golden Crosses, RSI momentum divergences, and volume breakouts—delivering actionable trade plans with calculated **Entry, Take Profits (TP), Stop Losses (SL), and Risk-to-Reward ratios**.
+`crypto-scanner` is a universal AI skill designed to equip **any AI coding agent or assistant** (Claude Code, OpenCode, Cursor, Windsurf, Codex, Aider, custom LLM agents) with real-time crypto technical analysis capabilities. It scans 100+ Binance USDT pairs live to detect high-probability trade setups, Golden Crosses, RSI momentum, and volume breakouts—delivering actionable trade plans complete with calculated **Entry, Take Profit (TP), Stop Loss (SL), and Risk-to-Reward (R:R) ratios**.
 
 ---
 
-## 🔥 Key Benefits & Features
+## 🔥 Key Features & Benefits
 
-- **⚡ Real-Time Binance Data**: Queries live 24h ticker and candle data across 100+ top-volume USDT pairs using Binance's public REST API (no API key required).
-- **📊 Multi-Timeframe Confluence**: Analyzes 1H execution candles alongside 4H macro trend alignment to eliminate false breakout traps.
-- **🎯 Precise Technical Indicators**:
-  - **Moving Averages**: 1H & 4H MA7 / MA25 crossover detection (Golden Cross & Death Cross).
-  - **RSI Momentum Scoring**: Filters out overbought (RSI > 70) FOMO entries while identifying sweet-spot momentum (RSI 50–68) and oversold bounces (4H RSI < 25).
-  - **Liquidity Filter**: Excludes low-volume pairs (< $2M 24h volume) to protect against slippage.
-- **🛡️ Capital Preservation First ("WAIT & SEE")**: Unlike generic bots that force trades, this skill explicitly advises **WAIT & SEE** when market conditions are choppy, low-volume, or unsafe.
-- **🌐 Multilingual Output**: Automatically responds in your spoken language (English, Indonesian, Spanish, etc.) while executing prompt logic in high-precision English.
+- **⚡ Universal Compatibility**: Works seamlessly with any AI agent framework, LLM CLI, or agentic coding environment.
+- **📈 Real-Time Binance Data**: Connects directly to Binance public REST APIs (no API key required) to fetch 24h tickers and OHLCV klines across 100+ top USDT pairs.
+- **📊 Multi-Timeframe Confluence**: Combines 1H execution signals with 4H macro trend verification to eliminate false breakout traps.
+- **🎯 Precision Technical Indicators**:
+  - **Moving Averages**: 1H & 4H MA7 vs MA25 Golden Cross & Death Cross detection.
+  - **RSI Momentum Filtering**: Pinpoints sweet-spot momentum (RSI 50–68), flags overbought FOMO risk (RSI > 70), and identifies oversold reversal opportunities (4H RSI < 25).
+  - **Liquidity Guard**: Automatically filters out low-volume pairs (< $2M 24h volume) to protect against slippage.
+- **🛡️ Capital Protection ("WAIT & SEE")**: Explicitly recommends **WAIT & SEE** when market conditions are choppy, low-volume, or ambiguous.
+- **🌐 Multilingual Responses**: Adapts output language to match user queries (English, Indonesian, Spanish, etc.) while maintaining strict underlying logic.
 
 ---
 
@@ -23,52 +24,59 @@
 
 ```text
 crypto-scanner/
-├── SKILL.md                 # Main agent skill instructions & workflow
-├── README.md                # Skill documentation & installation guide
+├── SKILL.md                 # Universal AI agent skill prompt & guidelines
+├── README.md                # General skill documentation & setup guide
 ├── LICENSE                  # MIT License
 ├── scripts/
 │   └── scanner.py           # Core Python market scanner & indicator engine
 ├── examples/
-│   ├── input.md             # Example prompt queries
-│   └── expected-output.md   # Sample AI trade analysis output
-└── references/              # Technical indicator reference documentation
+│   ├── input.md             # Sample user prompts
+│   └── expected-output.md   # Sample trade analysis output
+└── references/              # Technical analysis & indicator reference material
 ```
 
 ---
 
-## ⚡ Quick Installation
+## ⚡ Setup & Integration
 
-### Option 1: For Claude Code (`~/.claude/skills/`)
+### For Agent Skill Folders (Claude Code, OpenCode, etc.)
 
 ```bash
-mkdir -p ~/.claude/skills
+# General / Universal Skills Directory
+git clone https://github.com/wahyujhoo17/crypto-scanner.git ~/.agents/skills/crypto-scanner
+
+# For Claude Code
 git clone https://github.com/wahyujhoo17/crypto-scanner.git ~/.claude/skills/crypto-scanner
-```
 
-### Option 2: For OpenCode (`~/.config/opencode/skills/`)
-
-```bash
-mkdir -p ~/.config/opencode/skills
+# For OpenCode
 git clone https://github.com/wahyujhoo17/crypto-scanner.git ~/.config/opencode/skills/crypto-scanner
 ```
 
----
+### For Standalone Execution / Custom Agents
 
-## 💡 How to Use
+Run the scanner directly from terminal or integrate into custom Python workflows:
 
-Simply ask your AI assistant naturally in CLI mode:
+```bash
+# Scan full market (Top 100 USDT pairs)
+python3 scripts/scanner.py
 
-### 1. Scan Full Market
-> *"Scan Binance crypto market for the best MA crossover setups."*  
-> *"Cek market crypto mana pair yang sedang bagus untuk open posisi."*
-
-### 2. Analyze Specific Coin
-> *"Analyze ZECUSDT on 1H and 4H timeframes and provide a trade setup."*  
-> *"Bagaimana kondisi teknikal KAITOUSDT saat ini?"*
+# Analyze a specific trading pair
+python3 scripts/scanner.py ZECUSDT
+```
 
 ---
 
-## 📈 Example Output
+## 💡 Usage Examples
+
+Simply prompt your AI assistant naturally:
+
+- *"Scan the crypto market for the best MA crossover setups."*
+- *"Cek pasar crypto mana pair yang paling potensial untuk open posisi."*
+- *"Analyze ZECUSDT on 1H and 4H timeframes and provide a trade setup."*
+
+---
+
+## 📈 Sample AI Trade Output
 
 ```text
 Top Scanned Pairs:
@@ -90,7 +98,7 @@ Position Suggestion [LONG] (JTO/USDT):
 
 ## 📜 License
 
-Distributed under the **MIT License**. See `LICENSE` for more details.
+Distributed under the **MIT License**. See `LICENSE` for details.
 
 ---
 

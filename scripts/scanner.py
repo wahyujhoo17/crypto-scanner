@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import urllib.request
+import urllib.parse
 import urllib.error
 import json
 import ssl
@@ -15,7 +16,8 @@ def get_ssl_context():
 ctx = get_ssl_context()
 
 def get_klines(symbol, interval='1h', limit=50):
-    url = f'https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&limit={limit}'
+    encoded_symbol = urllib.parse.quote(symbol)
+    url = f'https://api.binance.com/api/v3/klines?symbol={encoded_symbol}&interval={interval}&limit={limit}'
     req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
     try:
         with urllib.request.urlopen(req, timeout=15, context=ctx) as response:
@@ -90,8 +92,11 @@ def scan_markets(min_volume=2000000, target_symbol=None):
     if target_symbol:
         pairs = [t for t in tickers if t['symbol'].upper() == target_symbol.upper()]
     else:
-        pairs = sorted([t for t in tickers if t['symbol'].endswith('USDT') and float(t['quoteVolume']) >= min_volume],
-                       key=lambda x: float(x['quoteVolume']), reverse=True)
+        # Filter standard ASCII alphanumeric USDT pairs to prevent non-ASCII URL encoding errors
+        pairs = sorted([
+            t for t in tickers
+            if t['symbol'].endswith('USDT') and t['symbol'].isascii() and t['symbol'].isalnum() and float(t['quoteVolume']) >= min_volume
+        ], key=lambda x: float(x['quoteVolume']), reverse=True)
 
     results = []
 

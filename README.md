@@ -56,19 +56,46 @@ crypto-scanner/
 
 ---
 
-## ⚡ Setup & Installation
+## ⚡ Quick Install
 
-### Option 1: Claude Code (`~/.claude/skills/`)
+### Option 1: Via Skills CLI (Recommended)
+
+Install interactively for any supported AI agent:
 
 ```bash
-mkdir -p ~/.claude/skills
-git clone https://github.com/wahyujhoo17/crypto-scanner.git ~/.claude/skills/crypto-scanner
+npx skills add wahyujhoo17/crypto-scanner
 ```
 
-### Option 2: OpenCode (`~/.config/opencode/skills/`)
+Install directly for specific agents:
 
 ```bash
-mkdir -p ~/.config/opencode/skills
+# For Codex
+npx skills add wahyujhoo17/crypto-scanner --agent codex
+
+# For Claude Code
+npx skills add wahyujhoo17/crypto-scanner --agent claude-code
+
+# For OpenCode
+npx skills add wahyujhoo17/crypto-scanner --agent opencode
+
+# Install globally across all supported agents
+npx skills add wahyujhoo17/crypto-scanner --global
+```
+
+Check for updates and update installed skills:
+
+```bash
+npx skills check
+npx skills update
+```
+
+### Option 2: Manual Git Clone
+
+```bash
+# For Claude Code
+git clone https://github.com/wahyujhoo17/crypto-scanner.git ~/.claude/skills/crypto-scanner
+
+# For OpenCode
 git clone https://github.com/wahyujhoo17/crypto-scanner.git ~/.config/opencode/skills/crypto-scanner
 ```
 

@@ -29,12 +29,12 @@ Perform crypto market scanning and multi-timeframe technical analysis using Bina
 
    - **Best Scanned Pairs List**: Present top 2-3 scanned pairs matching technical criteria.
    - **Best Momentum Coin Recommendation**:
-     - *If valid trade setup exists*:
+     - *If valid trade setup exists (LONG or SHORT)*:
        **Best Momentum Coin**: `PAIR` (Brief rationale: MA cross, RSI 1H/4H status, volume spike).
-       **Position Suggestion [LONG] (PAIR)**:
+       **Position Suggestion [LONG or SHORT] (PAIR)**:
        - **Entry**: $ENTRY_RANGE
        - **TP 1**: $PRICE | **TP 2**: $PRICE
-       - **Stop Loss (SL)**: $PRICE (below key support / MA25)
+       - **Stop Loss (SL)**: $PRICE (below key support / MA25 for LONG, above resistance for SHORT)
        - **Risk:Reward**: $RR_RATIO (TP1) / $RR_RATIO (TP2)
      - *If NO strong/safe setup exists*:
        State clearly in user's language: "Currently no pairs meet the ideal criteria for opening a position. Recommended to **WAIT & SEE** because [reason: e.g. market sideways / low volume / extreme RSI without confirmation]."

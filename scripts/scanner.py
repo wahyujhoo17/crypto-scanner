@@ -50,10 +50,32 @@ def calculate_wilder_rsi(closes, period=14):
         avg_gain = (avg_gain * (period - 1) + gains[i]) / period
         avg_loss = (avg_loss * (period - 1) + losses[i]) / period
 
+    if avg_gain == 0 and avg_loss == 0:
+        return 50.0
     if avg_loss == 0:
         return 100.0
+    if avg_gain == 0:
+        return 0.0
+
     rs = avg_gain / avg_loss
     return round(100 - (100 / (1 + rs)), 1)
+
+def calculate_risk_reward(entry, target, stop):
+    risk = entry - stop
+    reward = target - entry
+    if risk <= 0:
+        return 0.0
+    return round(reward / risk, 2)
+
+def is_valid_long(entry, tp1, sl, rr, trend_4h, rsi_1h, trend_1h):
+    return (
+        tp1 > entry and
+        sl < entry and
+        rr >= 1.5 and
+        trend_4h and
+        45 <= rsi_1h <= 68 and
+        trend_1h
+    )
 
 def scan_markets(min_volume=2000000, target_symbol=None):
     url = 'https://api.binance.com/api/v3/ticker/24hr'
@@ -99,7 +121,7 @@ def scan_markets(min_volume=2000000, target_symbol=None):
         rsi1 = calculate_wilder_rsi(c1)
         rsi4 = calculate_wilder_rsi(c4)
 
-        # Volume Ratio Calculation (comparing last closed candle to 20-candle MA)
+        # Volume Ratio Calculation (comparing last closed 1H candle volume against previous 20 closed candles)
         avg_vol_20 = sum(v1[-21:-1]) / 20 if len(v1) >= 21 else sum(v1[:-1]) / max(len(v1[:-1]), 1)
         vol_ratio = round(v1[-1] / avg_vol_20, 2) if avg_vol_20 > 0 else 0.0
         volume_spike = vol_ratio >= 1.5
@@ -125,18 +147,20 @@ def scan_markets(min_volume=2000000, target_symbol=None):
         reward_tp1 = round(tp1 - curr_price, 4)
         reward_tp2 = round(tp2 - curr_price, 4)
 
-        rr_tp1 = round(reward_tp1 / risk, 2) if risk > 0 else 0.0
-        rr_tp2 = round(reward_tp2 / risk, 2) if risk > 0 else 0.0
+        rr_tp1 = calculate_risk_reward(curr_price, tp1, sl)
+        rr_tp2 = calculate_risk_reward(curr_price, tp2, sl)
 
-        # Enforce 4H Trend Alignment + 1H Golden Cross / Bullish RSI
-        valid_long = (
-            tp1 > curr_price and
-            sl < curr_price and
-            risk > 0 and
-            rr_tp1 >= 1.5 and
-            m7_4h_curr > m25_4h_curr and
-            45 <= rsi1 <= 68 and
-            (cross_1h_bull or m7_1h_curr > m25_1h_curr)
+        trend_4h_ok = m7_4h_curr > m25_4h_curr
+        trend_1h_ok = cross_1h_bull or (m7_1h_curr > m25_1h_curr)
+
+        valid_long = is_valid_long(
+            entry=curr_price,
+            tp1=tp1,
+            sl=sl,
+            rr=rr_tp1,
+            trend_4h=trend_4h_ok,
+            rsi_1h=rsi1,
+            trend_1h=trend_1h_ok
         )
 
         entry_low = round(min(m7_1h_curr, curr_price), 4)

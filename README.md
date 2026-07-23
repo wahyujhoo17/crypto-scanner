@@ -2,7 +2,7 @@
 
 > **Real-time Binance crypto scanner & technical analysis engine for AI Assistants, Coding Agents, and LLM CLI tools.**
 
-`crypto-scanner` is an open-source AI agent skill that equips AI assistants with real-time crypto market scanning capabilities. It queries 100+ Binance USDT pairs live to detect high-probability trade setups, Golden Crosses, Wilder RSI momentum, and volume spikes—delivering validated trade plans complete with **Entry, Take Profit (TP1 & TP2), Stop Loss (SL), and Risk-to-Reward (R:R) ratios**.
+`crypto-scanner` is an open-source AI agent skill that equips AI assistants with real-time crypto market scanning capabilities. It scans up to 100 high-volume Binance USDT pairs live to detect high-probability trade setups, Golden Crosses, Wilder RSI momentum, and volume spikes—delivering validated trade plans complete with **Entry, Take Profit (TP1 & TP2), Stop Loss (SL), and Risk-to-Reward (R:R) ratios**.
 
 ---
 
@@ -22,12 +22,12 @@
 ## 🔥 Key Features & Technical Specifications
 
 - **🔒 Secure Network Requests**: Uses standard SSL verification with configurable timeout handling and detailed error logging to `sys.stderr`.
-- **📈 Real-Time Binance Data**: Connects directly to Binance public REST APIs (no API key required) to fetch 24h tickers and OHLCV klines across 100+ top USDT pairs.
-- **📊 Multi-Timeframe Confluence**: Combines 1H execution signals with 4H macro trend verification to eliminate false breakout traps.
+- **📈 Real-Time Binance Data**: Connects directly to Binance public REST APIs (no API key required) to fetch 24h tickers and OHLCV klines across up to 100 top USDT pairs.
+- **📊 Multi-Timeframe Confluence**: Combines 1H execution signals with 4H trend confirmation to reduce false breakout risk.
 - **🎯 Precise Technical Indicators**:
   - **Moving Averages**: 1H & 4H MA7 vs MA25 Golden Cross & Death Cross detection.
-  - **Wilder's RSI**: Uses Wilder's RSI smoothing, designed to produce results comparable to common technical-analysis platforms.
-  - **Volume Spike Detection**: Compares current candle volume against a 20-period moving average (`volume_ratio >= 1.5x`).
+  - **Wilder's RSI**: Uses Wilder's RSI smoothing, designed to produce results comparable to common technical-analysis platforms. Handles flat market neutrality (RSI = 50.0).
+  - **Volume Spike Detection**: Compares the latest closed 1H candle volume against the previous 20 closed candles (`volume_ratio >= 1.5x`).
   - **Liquidity Guard**: Automatically filters out low-volume pairs (< $2M 24h volume) to protect against slippage.
 - **⚖️ Risk-to-Reward (R:R) Validation**:
   - Requires `TP1 > Entry`, `SL < Entry`, `Risk > 0`, and `RR_TP1 >= 1.5`.

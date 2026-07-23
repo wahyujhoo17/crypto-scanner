@@ -1,22 +1,39 @@
 # 🚀 Universal Crypto Market Scanner AI Skill
 
-> **Real-time Binance crypto scanner & technical analysis engine for ANY AI Assistant, Coding Agent, or LLM CLI.**
+> **Real-time Binance crypto scanner & technical analysis engine for AI Assistants, Coding Agents, and LLM CLI tools.**
 
-`crypto-scanner` is a universal AI skill designed to equip **any AI coding agent or assistant** (Claude Code, OpenCode, Cursor, Windsurf, Codex, Aider, custom LLM agents) with real-time crypto technical analysis capabilities. It scans 100+ Binance USDT pairs live to detect high-probability trade setups, Golden Crosses, RSI momentum, and volume breakouts—delivering actionable trade plans complete with calculated **Entry, Take Profit (TP), Stop Loss (SL), and Risk-to-Reward (R:R) ratios**.
+`crypto-scanner` is an open-source AI agent skill that equips AI assistants with real-time crypto market scanning capabilities. It queries 100+ Binance USDT pairs live to detect high-probability trade setups, Golden Crosses, Wilder RSI momentum, and volume spikes—delivering validated trade plans complete with **Entry, Take Profit (TP1 & TP2), Stop Loss (SL), and Risk-to-Reward (R:R) ratios**.
 
 ---
 
-## 🔥 Key Features & Benefits
+## ⚡ Compatibility Matrix
 
-- **⚡ Universal Compatibility**: Works seamlessly with any AI agent framework, LLM CLI, or agentic coding environment.
+| Platform / Tool | Status | Integration Method |
+| :--- | :---: | :--- |
+| **Claude Code** | ✅ Tested | Skill Directory (`~/.claude/skills/`) |
+| **OpenCode** | ✅ Tested | Skill Directory (`~/.config/opencode/skills/`) |
+| **Codex CLI** | ✅ Tested | Agent Skill Folder |
+| **Cursor** | 🟡 Manual Setup | System Prompt / Custom Agent |
+| **Windsurf** | 🟡 Manual Setup | Custom Rules / Workflows |
+| **Aider** | ⚪ Not Tested | Script Execution via CLI |
+
+---
+
+## 🔥 Key Features & Technical Specifications
+
+- **🔒 Secure Network Requests**: Uses standard SSL verification with configurable timeout handling and detailed error logging to `sys.stderr`.
 - **📈 Real-Time Binance Data**: Connects directly to Binance public REST APIs (no API key required) to fetch 24h tickers and OHLCV klines across 100+ top USDT pairs.
 - **📊 Multi-Timeframe Confluence**: Combines 1H execution signals with 4H macro trend verification to eliminate false breakout traps.
-- **🎯 Precision Technical Indicators**:
+- **🎯 Precise Technical Indicators**:
   - **Moving Averages**: 1H & 4H MA7 vs MA25 Golden Cross & Death Cross detection.
-  - **RSI Momentum Filtering**: Pinpoints sweet-spot momentum (RSI 50–68), flags overbought FOMO risk (RSI > 70), and identifies oversold reversal opportunities (4H RSI < 25).
+  - **Wilder's RSI**: Implements official **Wilder's Smoothing RSI** (exponential moving average) matching TradingView, Binance, and TA-Lib calculations.
+  - **Volume Spike Detection**: Compares current candle volume against a 20-period moving average (`volume_ratio >= 1.5x`).
   - **Liquidity Guard**: Automatically filters out low-volume pairs (< $2M 24h volume) to protect against slippage.
-- **🛡️ Capital Protection ("WAIT & SEE")**: Explicitly recommends **WAIT & SEE** when market conditions are choppy, low-volume, or ambiguous.
-- **🌐 Multilingual Responses**: Adapts output language to match user queries (English, Indonesian, Spanish, etc.) while maintaining strict underlying logic.
+- **⚖️ Risk-to-Reward (R:R) Validation**:
+  - Requires `TP1 > Entry`, `SL < Entry`, `Risk > 0`, and `RR_TP1 >= 1.5`.
+  - Only generates a `LONG` recommendation when all risk management validation rules pass.
+- **🛡️ Capital Protection ("WAIT & SEE")**: Explicitly recommends **WAIT & SEE** when market conditions are choppy, low-volume, or fail risk validation.
+- **🌐 Multilingual Responses**: Adapts output language to match user queries (English, Indonesian, Spanish, etc.).
 
 ---
 
@@ -25,10 +42,12 @@
 ```text
 crypto-scanner/
 ├── SKILL.md                 # Universal AI agent skill prompt & guidelines
-├── README.md                # General skill documentation & setup guide
+├── README.md                # Skill documentation & compatibility matrix
 ├── LICENSE                  # MIT License
 ├── scripts/
 │   └── scanner.py           # Core Python market scanner & indicator engine
+├── tests/
+│   └── test_scanner.py      # Unit tests for Wilder RSI and indicators
 ├── examples/
 │   ├── input.md             # Sample user prompts
 │   └── expected-output.md   # Sample trade analysis output
@@ -37,27 +56,29 @@ crypto-scanner/
 
 ---
 
-## ⚡ Setup & Integration
+## ⚡ Setup & Installation
 
-### For Agent Skill Folders (Claude Code, OpenCode, etc.)
+### Option 1: Claude Code (`~/.claude/skills/`)
 
 ```bash
-# General / Universal Skills Directory
-git clone https://github.com/wahyujhoo17/crypto-scanner.git ~/.agents/skills/crypto-scanner
-
-# For Claude Code
+mkdir -p ~/.claude/skills
 git clone https://github.com/wahyujhoo17/crypto-scanner.git ~/.claude/skills/crypto-scanner
+```
 
-# For OpenCode
+### Option 2: OpenCode (`~/.config/opencode/skills/`)
+
+```bash
+mkdir -p ~/.config/opencode/skills
 git clone https://github.com/wahyujhoo17/crypto-scanner.git ~/.config/opencode/skills/crypto-scanner
 ```
 
-### For Standalone Execution / Custom Agents
-
-Run the scanner directly from terminal or integrate into custom Python workflows:
+### Option 3: Standalone Execution & Testing
 
 ```bash
-# Scan full market (Top 100 USDT pairs)
+# Run unit tests
+python3 -m unittest discover -s tests
+
+# Run full market scan (Top 100 USDT pairs)
 python3 scripts/scanner.py
 
 # Analyze a specific trading pair
@@ -80,19 +101,26 @@ Simply prompt your AI assistant naturally:
 
 ```text
 Top Scanned Pairs:
-1. JTO/USDT - 1H Golden Cross (MA7 > MA25), RSI 1H: 64.2, RSI 4H: 59.8 (High Volume)
+1. JTO/USDT - 1H Golden Cross (MA7 > MA25), RSI 1H: 63.4, RSI 4H: 64.5 (Volume Spike 1.6x)
 2. NEAR/USDT - 1H Bullish Momentum, RSI 1H: 68.1, RSI 4H: 42.5
 
 ⭐ Best Momentum Recommendation: JTO/USDT
-Fresh 1H Golden Cross confirmed with healthy RSI alignment (no overbought risk) and strong volume support.
+Fresh 1H Golden Cross confirmed with Wilder RSI alignment and volume spike (1.6x 20-candle average).
 
 Position Suggestion [LONG] (JTO/USDT):
-• Entry Range : $0.620 – $0.628
-• Take Profit 1: $0.640
-• Take Profit 2: $0.655
-• Stop Loss   : $0.608 (Below MA25 support)
-• Risk:Reward : 1:3.2
+• Entry Range : $0.633 – $0.648
+• Take Profit 1: $0.655
+• Take Profit 2: $0.671
+• Stop Loss   : $0.599 (Below MA25 support)
+• Risk:Reward : 1:3.2 (TP1) / 1:4.6 (TP2)
 ```
+
+---
+
+## ⚠️ Risk Disclaimer
+
+> **This project is an open-source educational market analysis tool, NOT financial advice.**  
+> Cryptocurrency trading involves significant financial risk. Signals generated by this script may be delayed, incomplete, or affected by sudden market volatility. Always perform your own research (DYOR) and employ strict risk management.
 
 ---
 

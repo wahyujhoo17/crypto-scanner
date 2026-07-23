@@ -26,7 +26,7 @@
 - **📊 Multi-Timeframe Confluence**: Combines 1H execution signals with 4H macro trend verification to eliminate false breakout traps.
 - **🎯 Precise Technical Indicators**:
   - **Moving Averages**: 1H & 4H MA7 vs MA25 Golden Cross & Death Cross detection.
-  - **Wilder's RSI**: Implements official **Wilder's Smoothing RSI** (exponential moving average) matching TradingView, Binance, and TA-Lib calculations.
+  - **Wilder's RSI**: Uses Wilder's RSI smoothing, designed to produce results comparable to common technical-analysis platforms.
   - **Volume Spike Detection**: Compares current candle volume against a 20-period moving average (`volume_ratio >= 1.5x`).
   - **Liquidity Guard**: Automatically filters out low-volume pairs (< $2M 24h volume) to protect against slippage.
 - **⚖️ Risk-to-Reward (R:R) Validation**:

@@ -75,9 +75,13 @@ def scan_markets(min_volume=2000000, target_symbol=None):
 
     for t in pairs[:100]:
         sym = t['symbol']
-        k1h = get_klines(sym, '1h', 50)
-        k4h = get_klines(sym, '4h', 50)
+        raw_k1h = get_klines(sym, '1h', 50)
+        raw_k4h = get_klines(sym, '4h', 50)
         
+        # Use last closed candles to avoid incomplete active candle distortion
+        k1h = raw_k1h[:-1] if len(raw_k1h) > 1 else raw_k1h
+        k4h = raw_k4h[:-1] if len(raw_k4h) > 1 else raw_k4h
+
         if len(k1h) < 30 or len(k4h) < 30:
             continue
 
@@ -91,12 +95,12 @@ def scan_markets(min_volume=2000000, target_symbol=None):
         m7_4h_curr, m25_4h_curr = sum(c4[-7:]) / 7, sum(c4[-25:]) / 25
         m7_4h_prev, m25_4h_prev = sum(c4[-8:-1]) / 7, sum(c4[-26:-1]) / 25
 
-        # Wilder's RSI Calculation
+        # Wilder's RSI Calculation on closed candles
         rsi1 = calculate_wilder_rsi(c1)
         rsi4 = calculate_wilder_rsi(c4)
 
-        # Volume Spike Calculation (20-period moving average volume)
-        avg_vol_20 = sum(v1[-21:-1]) / 20 if len(v1) >= 21 else sum(v1[:-1]) / len(v1[:-1])
+        # Volume Ratio Calculation (comparing last closed candle to 20-candle MA)
+        avg_vol_20 = sum(v1[-21:-1]) / 20 if len(v1) >= 21 else sum(v1[:-1]) / max(len(v1[:-1]), 1)
         vol_ratio = round(v1[-1] / avg_vol_20, 2) if avg_vol_20 > 0 else 0.0
         volume_spike = vol_ratio >= 1.5
 
@@ -124,13 +128,19 @@ def scan_markets(min_volume=2000000, target_symbol=None):
         rr_tp1 = round(reward_tp1 / risk, 2) if risk > 0 else 0.0
         rr_tp2 = round(reward_tp2 / risk, 2) if risk > 0 else 0.0
 
+        # Enforce 4H Trend Alignment + 1H Golden Cross / Bullish RSI
         valid_long = (
             tp1 > curr_price and
             sl < curr_price and
             risk > 0 and
             rr_tp1 >= 1.5 and
-            (cross_1h_bull or (m7_1h_curr > m25_1h_curr and 45 <= rsi1 <= 68))
+            m7_4h_curr > m25_4h_curr and
+            45 <= rsi1 <= 68 and
+            (cross_1h_bull or m7_1h_curr > m25_1h_curr)
         )
+
+        entry_low = round(min(m7_1h_curr, curr_price), 4)
+        entry_high = round(max(m7_1h_curr, curr_price), 4)
 
         results.append({
             'symbol': sym,
@@ -149,7 +159,7 @@ def scan_markets(min_volume=2000000, target_symbol=None):
             'volume_24h': float(t['quoteVolume']),
             'valid_long': valid_long,
             'setup': {
-                'entry_range': f"${round(m7_1h_curr, 4)} - ${curr_price}",
+                'entry_range': f"${entry_low} - ${entry_high}",
                 'tp1': tp1,
                 'tp2': tp2,
                 'sl': sl,
